@@ -545,7 +545,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.083052635, y: -1.2220621}
+  m_Offset: {x: -0.083052635, y: -1.2315807}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -556,7 +556,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4.156004, y: 0.54914284}
+  m_Size: {x: 4.156004, y: 0.6316385}
   m_EdgeRadius: 0
 --- !u!1001 &684457516
 Prefab:
@@ -567,11 +567,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4886460377472782, guid: bf25c01c6221940dab1a79e99d42af84, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0.36
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: 4886460377472782, guid: bf25c01c6221940dab1a79e99d42af84, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 4.8
+      value: 16.26
       objectReference: {fileID: 0}
     - target: {fileID: 4886460377472782, guid: bf25c01c6221940dab1a79e99d42af84, type: 2}
       propertyPath: m_LocalPosition.z
@@ -605,7 +605,7 @@ Prefab:
     - target: {fileID: 114073754866490148, guid: bf25c01c6221940dab1a79e99d42af84,
         type: 2}
       propertyPath: fallSpeed
-      value: 0.04
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 50441244328724544, guid: bf25c01c6221940dab1a79e99d42af84,
         type: 2}
@@ -641,7 +641,7 @@ Prefab:
     - target: {fileID: 114073754866490148, guid: bf25c01c6221940dab1a79e99d42af84,
         type: 2}
       propertyPath: jumpForce
-      value: 0.6
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 114073754866490148, guid: bf25c01c6221940dab1a79e99d42af84,
         type: 2}
@@ -652,6 +652,11 @@ Prefab:
         type: 2}
       propertyPath: speed
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114073754866490148, guid: bf25c01c6221940dab1a79e99d42af84,
+        type: 2}
+      propertyPath: skinSpacing
+      value: 0.036
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bf25c01c6221940dab1a79e99d42af84, type: 2}
@@ -1285,7 +1290,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 5.02
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2

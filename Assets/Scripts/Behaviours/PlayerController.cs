@@ -40,31 +40,41 @@ public class PlayerController : MonoBehaviour
     protected float hspeed = 0;
 
     [SerializeField]
+    protected float skinSpacing = 0.036f;
+
     protected bool isJumping = false;
 
     protected bool isFacingLeft = false;
 
     protected SpriteRenderer renderer;
 
+    [SerializeField]
+    protected Vector2 velocity = Vector2.zero;
+
     protected Vector2 groundNormal;
+
+    [SerializeField]
+    protected float height;
+
+    private List<Vector2> hits;
 
     // Use this for initialization
     void Start()
     {
         renderer = spr.GetComponent<SpriteRenderer>();
+        hits = new List<Vector2>();
+        height = renderer.bounds.size.y;
     }
 
-    // Update is called once per frame
+
     void Update()
-    {
-
-    }
-
-    void FixedUpdate()
     {
 
         // Processar inputs
         UpdateInput();
+
+        // Apply the gravity movement
+        ProcessGravity();
 
         // Processar moviemnto
         UpdateMovement();
@@ -76,90 +86,53 @@ public class PlayerController : MonoBehaviour
     // Processa dados de entrada (Teclado ou Joystick)
     void UpdateInput()
     {
-        hspeed = speed * Input.GetAxis("Horizontal") * Time.deltaTime;
+        velocity = Vector2.right * speed * Input.GetAxis("Horizontal") * Time.deltaTime;
 
         if (Input.GetButtonDown("Jump") && grounded)
         {
             grounded = false;
             isJumping = true;
-            vspeed = jumpForce;
+            velocity.y = jumpForce;
         }
 
+    }
+
+    void ProcessGravity()
+    {
+        if (!grounded)
+        {
+            velocity += fallSpeed * Physics2D.gravity * Time.deltaTime;
+        }
+
+        if (isJumping && velocity.y <= 0) {
+            isJumping = false;
+        }
     }
 
     // Atualiza dados fisicos de movimento do personagem
     void UpdateMovement()
 	{
+        Vector2 origin = footerRaycastOring.position;
 
-        if (grounded)
-        {
-            vspeed = 0;
-        }
-        else
-        {
-            vspeed -= fallSpeed;
-            //vspeed = Mathf.Clamp(vspeed, Physics2D.gravity.y * Time.deltaTime, jumpForce);
-        }
-        
+		float distance = height;
 
-        RaycastHit2D hit = Physics2D.Raycast(
-            footerRaycastOring.position,
-            -Vector2.up,
-            Mathf.Infinity
-        );
+        RaycastHit2D hit = Physics2D.Raycast(origin, -Vector2.up, distance);
 
-        if (hit.collider != null && hit.collider.gameObject.tag != "Player")
-        {
-            groundNormal = hit.normal.normalized;
-            Debug.Log(groundNormal);
-            //var direction = new Vector2(groundNormal.y, -groundNormal.x);
-            var direction = new Vector2(-groundNormal.x, groundNormal.y);
-            var distance = Mathf.Sqrt(direction.x * direction.x + direction.y * direction.y);
-            Vector2 move = (Vector2.right + direction.normalized);
-
-            if (distance > hspeed) {
-                move = new Vector2(move.x/distance*hspeed, move.y/distance*hspeed);  
-            } 
-            //Vector2 move = ((Vector2.right + direction.normalized) / distance * hspeed) + (Vector2.up * vspeed);
-            Debug.Log(direction);
-            float product = Vector2.Dot(move, direction);
-
-            //transform.Translate(move);
-            //move = Vector2.up * vspeed;
-
-            transform.Translate(move);
-
-            if (!grounded && !isJumping && hit.distance <= Mathf.Abs(vspeed))
-            {
-                vspeed = 0;
-                grounded = true;
-
-            }
-
-            if (grounded) {
-                //transform.position = new Vector3(transform.position.x, hit.point.y + (renderer.bounds.size.y / 2) + 0.046f, 0);    
-            }
-
-
-        } else {
-
-            if (grounded) {
-                grounded = false;
-            }
-
-            Vector2 movement = new Vector2(hspeed, vspeed);
-            //transform.Translate(Vector2.right);
-        }
+        if (hit && !isJumping) {
+			
+            hits.Add(hit.point);
             
-        if (isJumping)
-        {
-            if (vspeed <= 0)
-            {
-                isJumping = false;
+            if (!grounded) {
+
+				if (hit.distance < Mathf.Abs(velocity.y)) {
+					velocity.y = -hit.distance;
+                    grounded = true;
+                }
+
             }
         }
 
-
+        transform.Translate(velocity, Space.World);
 	}
 
 	// Atualiza estado visual do personagem (animaçao e sprites)
@@ -170,7 +143,13 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(footerRaycastOring.position, (Vector2)footerRaycastOring.position + (Vector2.up * (vspeed + 0.1f)));
+        foreach (Vector2 point in hits)
+        {
+            Gizmos.color = Color.red;
+            float scale = 0.2f;
+            Gizmos.DrawCube(point, new Vector3(scale, scale, scale));
+        }
+
+        Gizmos.DrawLine(footerRaycastOring.position, (Vector2)footerRaycastOring.position + (-Vector2.up * (height + velocity.magnitude)));
     }
 }
